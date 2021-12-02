@@ -3,15 +3,10 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 
+from util.helper import date_col
+
 data_dir = os.path.join(os.path.dirname(__file__), 'data/')
 clinical_filename = 'Klinische_Aspekte.xlsx'
-
-def date_col(df, year_col, week_col):
-	df[year_col] = df[year_col].astype(str)
-	df[week_col] = df[week_col].astype(str)
-	df['Meldedatum'] = df[year_col] + '-' + df[week_col]
-	df.drop(columns=[year_col, week_col], inplace=True)
-	return df
 
 def main():
 	hospitalizations_total = pd.read_excel(data_dir + clinical_filename, sheet_name=0, header=3)
@@ -28,6 +23,8 @@ def main():
 
 	ax1.set_title('Hospitalizations for CoViD-19 in Germany')
 	ax1.set_ylabel('Hospitalizations')
+
+	# TODO: get age groups programmatically
 
 	ax1.plot(hospitalizations_total['Meldedatum'], hospitalizations_total['Anzahl hospitalisiert'], label='Total')
 	ax1.plot(hospitalizations_age['Meldedatum'], hospitalizations_age['Fälle A80+'], label='80+')
