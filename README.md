@@ -10,26 +10,21 @@ This directory contains the current data on all kinds of information: hospitaliz
 This directory contains helper functions that are required for data processing.
 
 ## Scripts
-### Hospitalizations by age
-This script plots:
-- the amount of cases that required hospitalization
-	- in total and
-	- by age.
-- the hospitalization incidence by age  
+### Create Plots
+This script handles the data and calls all plot functions from different scripts.  
 
 Execute with:  
-  
-`python hospitalizations_by_age.py`
+`python create_plots.py`
 
-### Cases by age
-This script plots:
-- the amount of cases
+### Hospitalizations
+Plots:
+- amount of cases that required hospitalization
 	- in total and
 	- by age
-- the case incidence (averaged over 7 days, per 100.000 people)
-	- in total and
-	- by age  
+- hospitalization incidence by age
 
-Execute with:  
-
-`python cases_by_age.py`
+### Cases
+Plots:
+- amount of cases by age
+- case incidence by age (averaged over 7 days, per 100.000 people)
+- total amount of cases and the positive test rate

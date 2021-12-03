@@ -5,19 +5,7 @@ import matplotlib.pyplot as plt
 
 from util.helper import date_col
 
-data_dir = os.path.join(os.path.dirname(__file__), 'data/')
-clinical_filename = 'Klinische_Aspekte.xlsx'
-
-def main():
-	hospitalizations_total = pd.read_excel(data_dir + clinical_filename, sheet_name=0, header=3)
-	hospitalizations_age = pd.read_excel(data_dir + clinical_filename, sheet_name=2, header=5)
-	hospitalizations_age_incidence = pd.read_excel(data_dir + clinical_filename, sheet_name=4, header=4)
-
-	# Create column for calendar week
-	hospitalizations_total = date_col(hospitalizations_total, 'Meldejahr', 'MW')
-	hospitalizations_age = date_col(hospitalizations_age, 'Meldejahr', 'Meldewoche')
-	hospitalizations_age_incidence = date_col(hospitalizations_age_incidence, 'Meldejahr', 'Meldewoche')
-
+def plot_hospitalizations(hospitalizations_total, hospitalizations_age, hospitalizations_age_incidence):
 	# Create plot for hospitalizations (total and rate)
 	fig, (ax1, ax2) = plt.subplots(nrows=2, sharex=True)
 
@@ -26,6 +14,8 @@ def main():
 
 	# TODO: get age groups programmatically
 
+	# plot total hospitalizations for all age groups
+	# TODO: plot stacked
 	ax1.plot(hospitalizations_total['Meldedatum'], hospitalizations_total['Anzahl hospitalisiert'], label='Total')
 	ax1.plot(hospitalizations_age['Meldedatum'], hospitalizations_age['Fälle A80+'], label='80+')
 	ax1.plot(hospitalizations_age['Meldedatum'], hospitalizations_age['Fälle A60..79'], label='60-79')
@@ -39,6 +29,8 @@ def main():
 	ax2.set_ylabel('Hospitalization Incidence')
 	ax2.set_xlabel('Year-Calendar Week')
 
+	# TODO: change color coding to match with upper graph
+	# plot hospitalization incidence for all age groups
 	ax2.plot(hospitalizations_age_incidence['Meldedatum'], hospitalizations_age_incidence['Inzidenz A80+'], label='80+')
 	ax2.plot(hospitalizations_age_incidence['Meldedatum'], hospitalizations_age_incidence['Inzidenz A60..79'], label='60-79')
 	ax2.plot(hospitalizations_age_incidence['Meldedatum'], hospitalizations_age_incidence['Inzidenz A35..59'], label='35-59')
@@ -48,12 +40,11 @@ def main():
 
 	ax2.legend()
 
-	plt.xticks(rotation=45)
-	n = 2  # Keeps every 2nd label
-	[l.set_visible(False) for (i,l) in enumerate(ax1.xaxis.get_ticklabels()) if i % n != 0]
+	# TODO: segment plot into months instead of having week-ticks
+	# rotate x labels for readability
+	plt.xticks(rotation=45, ha='right')
+	# Keep every 2nd label for readability
+	n = 2  
+	[l.set_visible(False) for (i,l) in enumerate(ax2.xaxis.get_ticklabels()) if i % n != 0]
 
 	plt.show()
-
-
-if __name__ == '__main__':
-	main()
