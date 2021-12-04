@@ -62,7 +62,9 @@ def main():
 	# create plots
 	plot_hospitalizations(hospitalizations_total, hospitalizations_age, hospitalizations_age_incidence)
 	plot_cases_by_age(cases, cases_incidence)
-	plot_cases_total(cases, amount_tests)
+	plot_cases_positivityrate(cases, amount_tests)
+	# TODO: plot cases and required hospitalizations (total and by age group)
+	# plot_cases_hospizalization(cases, hospitalizations_age)
 
 if __name__ == '__main__':
 	main()

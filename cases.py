@@ -44,7 +44,7 @@ def plot_cases_by_age(cases, cases_incidence):
 
 	plt.show()
 
-def plot_cases_total(cases, amount_tests):
+def plot_cases_positivityrate(cases, amount_tests):
 	fig, ax1 = plt.subplots()
 	ax1.set_title('Cases and Positive Test Rate')
 	ax1.set_xlabel('Year-Calendar Week')
