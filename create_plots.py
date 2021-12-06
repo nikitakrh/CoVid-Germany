@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 from hospitalizations import plot_hospitalizations
-from cases import plot_cases_by_age, plot_cases_total
+from cases import plot_cases_by_age, plot_cases_positivityrate
 from util.helper import date_col
 
 
@@ -33,6 +33,8 @@ def main():
 	amount_tests = pd.read_excel(data_dir + amount_tests_filename, sheet_name=1, header=0)
 
 	# DataFrame-/file-specific preprocessing
+	# interpolate missing values
+	hospitalizations_age = hospitalizations_age.interpolate(method='linear')
 	# transpose cases DataFrames
 	cases = cases.T.reset_index()
 	cases_incidence = cases_incidence.T.reset_index()
