@@ -4,11 +4,12 @@ import os
 import matplotlib.pyplot as plt
 
 # TODO: plot cases and hospitalizations by age for each agegroup
-# TODO: plot cases as positive test rate
 
 def plot_cases_by_age(cases, cases_incidence):
 	# Create plot for hospitalizations (total and rate)
 	fig, (ax1, ax2) = plt.subplots(nrows=2, sharex=True)
+
+	colors = plt.cm.tab10
 
 	ax1.set_title('Cases of CoViD-19 in Germany')
 	ax1.set_ylabel('Case')
@@ -17,10 +18,13 @@ def plot_cases_by_age(cases, cases_incidence):
 
 	# plot total number of cases for all age groups
 	# TODO: plot stacked
-	ax1.plot(cases['Meldedatum'], cases['90+'], label='90+')
-	for i in range(85, -1, -5):
-		agegroup = str(i) + ' - ' + str(i+4)
-		ax1.plot(cases['Meldedatum'], cases[agegroup], label=agegroup)
+	ax1.plot(cases['Meldedatum'], cases['Gesamt'], label='Total')
+	ax1.stackplot(cases['Meldedatum'],
+		cases['Fälle A00..04'], cases['Fälle A05..14'], cases['Fälle A15..34'],
+		cases['Fälle A35..59'], cases['Fälle A60..79'], cases['Fälle A80+'],
+		labels=['0-4', '5-14', '15-34', '35-59', '60-79', '80+'],
+		colors=[colors(i) for i in range(1,7)]
+		)
 
 	ax1.legend()
 
@@ -28,6 +32,7 @@ def plot_cases_by_age(cases, cases_incidence):
 	ax2.set_xlabel('Year-Calendar Week')
 
 	# plot case incidence for all age groups
+	# TODO: case incidences with adjusted age groups
 	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['90+'], label='90+')
 	for i in range(85, -1, -5):
 		agegroup = str(i) + ' - ' + str(i+4)

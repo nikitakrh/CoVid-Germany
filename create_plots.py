@@ -38,6 +38,13 @@ def main():
 	# transpose cases DataFrames
 	cases = cases.T.reset_index()
 	cases_incidence = cases_incidence.T.reset_index()
+	# generate new age groups
+	cases['Fälle A00..04'] = cases['0 - 4']
+	cases['Fälle A05..14'] = cases['5 - 9'] + cases['10 - 14']
+	cases['Fälle A15..34'] = cases['15 - 19'] + cases['20 - 24'] + cases['25 - 29'] + cases['30 - 34']
+	cases['Fälle A35..59'] = cases['35 - 39'] + cases['40 - 44'] + cases['45 - 49'] + cases['50 - 54'] + cases['55 - 59']
+	cases['Fälle A60..79'] = cases['60 - 64'] + cases['65 - 69'] + cases['70 - 74'] + cases['75 - 79']
+	cases['Fälle A80+'] = cases['80 - 84'] + cases['85 - 89'] + cases['90+']
 	# clean up amount_test DataFrame
 	amount_tests.at[0, 'Kalenderwoche'] = '10/2020'
 	amount_tests = amount_tests[:-1] # delete last row since its just the total
