@@ -14,3 +14,6 @@ def date_col(df, year_col='Meldejahr', week_col='Meldewoche'):
 	df['Meldedatum'] = df[year_col] + '-' + df[week_col]
 	df.drop(columns=[year_col, week_col], inplace=True)
 	return df
+
+def date_to_week(df, date_col='date'):
+	pass

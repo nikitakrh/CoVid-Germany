@@ -3,13 +3,15 @@ import os
 
 from hospitalizations import plot_hospitalizations
 from cases import plot_cases_by_age, plot_cases_positivityrate
-from util.helper import date_col
+from vaccine_effectiveness import plot_hospitalization_rate
+from util.helper import date_col, date_to_week
 
 
 data_dir = os.path.join(os.path.dirname(__file__), 'data/')
 clinical_filename = 'Klinische_Aspekte.xlsx'
 cases_filename = 'Altersverteilung.xlsx'
 amount_tests_filename = 'Testzahlen-gesamt.xlsx'
+vaccinations_filename = 'germany_vaccinations_timeseries_v2.tsv'
 
 def collect_data():
 	# TODO: download data automatically
@@ -31,6 +33,8 @@ def main():
 	cases_incidence = pd.read_excel(data_dir + cases_filename, sheet_name=1, header=0, index_col='Altersgruppe')
 	# amount of tests
 	amount_tests = pd.read_excel(data_dir + amount_tests_filename, sheet_name=1, header=0)
+	# vaccinations
+	vaccinations = pd.read_csv(data_dir + vaccinations_filename, sep='\t', header=0)
 
 	# DataFrame-/file-specific preprocessing
 	# interpolate missing values
@@ -49,6 +53,8 @@ def main():
 	amount_tests.at[0, 'Kalenderwoche'] = '10/2020'
 	amount_tests = amount_tests[:-1] # delete last row since its just the total
 	amount_tests['Positivenanteil (%)'] = (amount_tests['Positiv getestet'] / amount_tests['Anzahl Testungen']) * 100.0
+	# adjust vaccination DataFrame to have week column
+	vaccinations = date_to_week(vaccinations)
 
 	# create new columns for better processing
 	cases[['Meldejahr', 'Meldewoche']] = cases['index'].str.split('_', expand=True)
@@ -72,8 +78,7 @@ def main():
 	plot_hospitalizations(hospitalizations_total, hospitalizations_age, hospitalizations_age_incidence)
 	plot_cases_by_age(cases, cases_incidence)
 	plot_cases_positivityrate(cases, amount_tests)
-	# TODO: plot cases and required hospitalizations (total and by age group)
-	# plot_cases_hospizalization(cases, hospitalizations_age)
+	plot_hospitalization_rate(hospitalizations_total, cases)
 
 if __name__ == '__main__':
 	main()

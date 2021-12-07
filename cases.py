@@ -1,6 +1,5 @@
 import pandas as pd 
 import numpy as np
-import os
 import matplotlib.pyplot as plt
 
 # TODO: plot cases and hospitalizations by age for each agegroup

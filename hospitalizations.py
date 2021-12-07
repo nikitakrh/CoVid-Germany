@@ -1,10 +1,6 @@
 import pandas as pd 
 import numpy as np
-import os
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-
-from util.helper import date_col
 
 def plot_hospitalizations(hospitalizations_total, hospitalizations_age, hospitalizations_age_incidence):
 	# Create plot for hospitalizations (total and rate)

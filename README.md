@@ -28,3 +28,7 @@ Plots:
 - amount of cases by age
 - case incidence by age (averaged over 7 days, per 100.000 people)
 - total amount of cases and the positive test rate
+
+### Vaccine Effectiveness
+Plots:
+- Hospitalization rate over time (hospitalization per infection in %)
