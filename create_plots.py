@@ -25,14 +25,14 @@ def main():
 
 	# get DataFrames from excel files
 	# hospitalizations
-	hospitalizations_total = pd.read_excel(data_dir + clinical_filename, sheet_name=0, header=3)
-	hospitalizations_age = pd.read_excel(data_dir + clinical_filename, sheet_name=2, header=5)
-	hospitalizations_age_incidence = pd.read_excel(data_dir + clinical_filename, sheet_name=4, header=4)
+	hospitalizations_total = pd.read_excel(data_dir + clinical_filename, sheet_name=0, header=3, engine='openpyxl')
+	hospitalizations_age = pd.read_excel(data_dir + clinical_filename, sheet_name=2, header=5, engine='openpyxl')
+	hospitalizations_age_incidence = pd.read_excel(data_dir + clinical_filename, sheet_name=4, header=4, engine='openpyxl')
 	# cases
-	cases = pd.read_excel(data_dir + cases_filename, sheet_name=0, header=0, index_col='Altersgruppe')
-	cases_incidence = pd.read_excel(data_dir + cases_filename, sheet_name=1, header=0, index_col='Altersgruppe')
+	cases = pd.read_excel(data_dir + cases_filename, sheet_name=0, header=0, index_col='Altersgruppe', engine='openpyxl')
+	cases_incidence = pd.read_excel(data_dir + cases_filename, sheet_name=1, header=0, index_col='Altersgruppe', engine='openpyxl')
 	# amount of tests
-	amount_tests = pd.read_excel(data_dir + amount_tests_filename, sheet_name=1, header=0)
+	amount_tests = pd.read_excel(data_dir + amount_tests_filename, sheet_name=1, header=0, engine='openpyxl')
 	# vaccinations
 	vaccinations = pd.read_csv(data_dir + vaccinations_filename, sep='\t', header=0)
 

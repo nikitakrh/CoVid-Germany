@@ -14,4 +14,7 @@ def plot_hospitalization_rate(hospitalizations_total, cases):
 	ax.legend()
 
 	plt.xticks(rotation=45, ha='right')
+	# Keep every 2nd label for readability
+	n = 2  
+	[l.set_visible(False) for (i,l) in enumerate(ax2.xaxis.get_ticklabels()) if i % n != 0]
 	plt.show()
