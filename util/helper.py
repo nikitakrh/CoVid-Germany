@@ -17,3 +17,6 @@ def date_col(df, year_col='Meldejahr', week_col='Meldewoche'):
 
 def date_to_week(df, date_col='date'):
 	pass
+
+def collect_data():
+	pass

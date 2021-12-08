@@ -16,7 +16,6 @@ def plot_cases_by_age(cases, cases_incidence):
 	# TODO: get age groups programmatically
 
 	# plot total number of cases for all age groups
-	# TODO: plot stacked
 	ax1.plot(cases['Meldedatum'], cases['Gesamt'], label='Total')
 	ax1.stackplot(cases['Meldedatum'],
 		cases['Fälle A00..04'], cases['Fälle A05..14'], cases['Fälle A15..34'],
@@ -31,11 +30,12 @@ def plot_cases_by_age(cases, cases_incidence):
 	ax2.set_xlabel('Year-Calendar Week')
 
 	# plot case incidence for all age groups
-	# TODO: case incidences with adjusted age groups
-	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['90+'], label='90+')
-	for i in range(85, -1, -5):
-		agegroup = str(i) + ' - ' + str(i+4)
-		ax2.plot(cases_incidence['Meldedatum'], cases_incidence[agegroup], label=agegroup)
+	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A80+'], color=colors(6), label='80+')
+	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A60..79'], color=colors(5), label='60-79')
+	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A35..59'], color=colors(4), label='35-59')
+	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A15..34'], color=colors(3), label='15-34')
+	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A05..14'], color=colors(2), label='5-14')
+	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A00..04'], color=colors(1), label='0-4')
 
 	ax2.legend()
 
