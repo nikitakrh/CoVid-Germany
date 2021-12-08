@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 
 
 def date_col(df, year_col='Meldejahr', week_col='Meldewoche'):
@@ -16,7 +17,9 @@ def date_col(df, year_col='Meldejahr', week_col='Meldewoche'):
 	return df
 
 def date_to_week(df, date_col='date'):
-	pass
+	df[['Meldejahr']] = pd.to_datetime(df[date_col], errors='coerce').dt.year
+	df[['Meldewoche']] = pd.to_datetime(df[date_col], errors='coerce').dt.isocalendar().week
+	return df
 
 def collect_data():
 	pass

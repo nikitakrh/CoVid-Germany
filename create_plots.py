@@ -69,6 +69,20 @@ def main():
 	amount_tests.at[0, 'Kalenderwoche'] = '10/2020'
 	amount_tests = amount_tests[:-1] # delete last row since its just the total
 	amount_tests['Positivenanteil (%)'] = (amount_tests['Positiv getestet'] / amount_tests['Anzahl Testungen']) * 100.0
+	# add 'fully vaccinated' and 'boostered' column into vaccination DataFrame
+	vaccinations['fully vaccinated'] = (
+		vaccinations['dosen_biontech_zweit_kumulativ'] + 
+		vaccinations['dosen_moderna_zweit_kumulativ'] + 
+		vaccinations['dosen_astra_zweit_kumulativ'] + 
+		vaccinations['dosen_johnson_erst_kumulativ']
+	)
+	vaccinations['boostered'] = (
+		vaccinations['dosen_biontech_dritt_kumulativ'] +
+		vaccinations['dosen_moderna_dritt_kumulativ'] + 
+		vaccinations['dosen_astra_dritt_kumulativ'] + 
+		vaccinations['dosen_johnson_zweit_kumulativ'] + 
+		vaccinations['dosen_johnson_dritt_kumulativ']
+	)
 	# adjust vaccination DataFrame to have week column
 	vaccinations = date_to_week(vaccinations)
 
@@ -84,6 +98,10 @@ def main():
 	cases = date_col(cases)
 	cases_incidence = date_col(cases_incidence)
 	amount_tests = date_col(amount_tests)
+	vaccinations = date_col(vaccinations)
+
+	vaccinations = vaccinations.groupby(['Meldedatum']).max().reset_index()
+	vaccinations.sort_values(['Meldedatum'], inplace=True)
 
 
 	# ------------------------------
@@ -94,7 +112,7 @@ def main():
 	plot_hospitalizations(hospitalizations_total, hospitalizations_age, hospitalizations_age_incidence)
 	plot_cases_by_age(cases, cases_incidence)
 	plot_cases_positivityrate(cases, amount_tests)
-	plot_hospitalization_rate(hospitalizations_total, cases)
+	plot_hospitalization_rate(hospitalizations_total, cases, vaccinations)
 
 if __name__ == '__main__':
 	main()
