@@ -12,13 +12,14 @@ def date_col(df, year_col='Meldejahr', week_col='Meldewoche'):
 	"""
 	df[year_col] = df[year_col].astype(str)
 	df[week_col] = df[week_col].astype(str)
-	df['Meldedatum'] = df[year_col] + '-' + df[week_col]
+	#df['Meldedatum'] = df[year_col] + '-' + df[week_col]
+	df['Meldedatum'] = pd.to_datetime(df[week_col] + df[year_col].add('-1'), format='%V%G-%u')
 	df.drop(columns=[year_col, week_col], inplace=True)
 	return df
 
 def date_to_week(df, date_col='date'):
-	df[['Meldejahr']] = pd.to_datetime(df[date_col], errors='coerce').dt.year
-	df[['Meldewoche']] = pd.to_datetime(df[date_col], errors='coerce').dt.isocalendar().week
+	df['Meldejahr'] = pd.to_datetime(df[date_col], errors='coerce').dt.isocalendar().year
+	df['Meldewoche'] = pd.to_datetime(df[date_col], errors='coerce').dt.isocalendar().week
 	return df
 
 def collect_data():

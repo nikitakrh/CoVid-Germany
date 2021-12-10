@@ -10,8 +10,10 @@ def plot_hospitalization_rate(hospitalizations_total, cases, vaccinations):
 
 	ax2 = ax1.twinx()
 
-	ax1.set_ylabel('Hospitalization rate')
-	ax2.set_ylabel('Vaccination Rate')
+	ax1.set_ylabel('Hospitalization rate in %')
+	ax2.set_ylabel('Vaccination Rate in %')
+
+	ax2.set_ylim([0,100])
 
 	colors = ['xkcd:blue', 'xkcd:light green', 'xkcd:green']
 

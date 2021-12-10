@@ -1,52 +1,33 @@
-import pandas as pd 
-import numpy as np
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 # TODO: plot cases and hospitalizations by age for each agegroup
 
 def plot_cases_by_age(cases, cases_incidence):
-	# Create plot for hospitalizations (total and rate)
-	fig, (ax1, ax2) = plt.subplots(nrows=2, sharex=True)
 
-	colors = plt.cm.tab10
+	fig1 = px.line(
+		cases, x='Meldedatum', y='Gesamt', 
+		title='Cases of CoViD', labels={'Meldedatum': 'Date', 'Gesamt': 'Cases'}
+	)
+			
+	fig1.add_traces(
+		list(px.area(
+			cases,
+			x='Meldedatum',
+			y=['Fälle A00..04', 'Fälle A05..14', 'Fälle A15..34', 'Fälle A35..59', 'Fälle A60..79', 'Fälle A80+'],
+		).select_traces())
+	)
 
-	ax1.set_title('Cases of CoViD-19 in Germany')
-	ax1.set_ylabel('Case')
+	fig2 = px.line(
+		cases_incidence, 
+		x='Meldedatum', 
+		y=['Inzidenz A00..04', 'Inzidenz A05..14','Inzidenz A15..34', 'Inzidenz A35..59', 'Inzidenz A60..79', 'Inzidenz A80+'], 
+		title='Case Incidence by Age',
+		labels={'Meldedatum': 'Date', 'value': 'Case Incidence', 'variable': 'Agegroups'}
+	)
 
-	# TODO: get age groups programmatically
+	figs = [fig1, fig2]
 
-	# plot total number of cases for all age groups
-	ax1.plot(cases['Meldedatum'], cases['Gesamt'], label='Total')
-	ax1.stackplot(cases['Meldedatum'],
-		cases['Fälle A00..04'], cases['Fälle A05..14'], cases['Fälle A15..34'],
-		cases['Fälle A35..59'], cases['Fälle A60..79'], cases['Fälle A80+'],
-		labels=['0-4', '5-14', '15-34', '35-59', '60-79', '80+'],
-		colors=[colors(i) for i in range(1,7)]
-		)
-
-	ax1.legend()
-
-	ax2.set_ylabel('Case Incidence by Age')
-	ax2.set_xlabel('Year-Calendar Week')
-
-	# plot case incidence for all age groups
-	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A80+'], color=colors(6), label='80+')
-	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A60..79'], color=colors(5), label='60-79')
-	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A35..59'], color=colors(4), label='35-59')
-	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A15..34'], color=colors(3), label='15-34')
-	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A05..14'], color=colors(2), label='5-14')
-	ax2.plot(cases_incidence['Meldedatum'], cases_incidence['Inzidenz A00..04'], color=colors(1), label='0-4')
-
-	ax2.legend()
-
-	# TODO: segment plot into months instead of having week-ticks
-	# rotate x labels for readability
-	plt.xticks(rotation=45, ha='right')
-	# Keep every 2nd label for readability
-	n = 2  
-	[l.set_visible(False) for (i,l) in enumerate(ax2.xaxis.get_ticklabels()) if i % n != 0]
-
-	plt.show()
+	return figs
 
 def plot_cases_positivityrate(cases, amount_tests):
 	fig, ax1 = plt.subplots()
