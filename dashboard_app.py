@@ -124,8 +124,8 @@ def main():
 	# create plots
 	figs_hosp = plot_hospitalizations(hospitalizations_total, hospitalizations_age)
 	figs_cases = plot_cases_by_age(cases, cases_incidence)
-	#fig_pos = plot_cases_positivityrate(cases, amount_tests)
-	#fig_hosp_rate = plot_hospitalization_rate(hospitalizations_total, cases, vaccinations)
+	fig_pos = plot_cases_positivityrate(cases, amount_tests)
+	fig_hosp_rate = plot_hospitalization_rate(hospitalizations_total, cases, vaccinations)
 	
 
 
@@ -136,7 +136,7 @@ def main():
 		'background': '#121212',
 		'text': '#BB86FC'
 	}
-	for fig in (figs_hosp + figs_cases):
+	for fig in (figs_hosp + figs_cases + [fig_pos] + [fig_hosp_rate]):
 		fig = style_fig(fig, colors)
 
 	app.layout = html.Div(style={'backgroundColor': colors['background']}, children=[
@@ -145,21 +145,24 @@ def main():
 			style={
 				'color': colors['text'],
 				'textAlign': 'center',
-			}),
+			}
+		),
 
 		html.Div(
 			children='Custom dashboard about corona infections, hospitalizations and vaccinations in Germany',
 			style={
 				'color': colors['text'],
 				'textAlign': 'center',
-				}),
+				}
+		),
 
 		html.Div(children=[
 			html.H2(
 				children='Hospitalizations',
 				style={
 					'color': colors['text'],
-				}),
+				}
+			),
 
 			dcc.Graph(
 				id='hospitalizations',
@@ -177,7 +180,8 @@ def main():
 				children='Cases',
 				style={
 					'color': colors['text'],
-				}),
+				}
+			),
 
 			dcc.Graph(
 				id='cases',
@@ -187,6 +191,25 @@ def main():
 			dcc.Graph(
 				id='case-incidence',
 				figure=figs_cases[1]
+			)
+		]),
+
+		html.Div(children=[
+			html.H2(
+				children='Additional Information',
+				style={
+					'color': colors['text']
+				}
+			),
+
+			dcc.Graph(
+				id='pos-test-rate',
+				figure=fig_pos
+			),
+
+			dcc.Graph(
+				id='hosp-rate',
+				figure=fig_hosp_rate
 			)
 		]),
 	])

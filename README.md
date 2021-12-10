@@ -10,11 +10,13 @@ This directory contains the current data on all kinds of information: hospitaliz
 This directory contains helper functions that are required for data processing.
 
 ## Scripts
-### Create Plots
-This script handles the data and calls all plot functions from different scripts.  
+### Dashboard App
+- handles the data 
+- calls all plot functions to manage figures
+- creates web app to be accessed via `http://127.0.0.1:8050/`
 
 Execute with:  
-`python create_plots.py`
+`python dashboard_app.py`
 
 ### Hospitalizations
 Plots:
