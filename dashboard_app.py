@@ -15,12 +15,18 @@ def main():
 	app = dash.Dash(__name__)
 	colors = {
 		'background': '#121212',
+		'tile': '#313131',
 		'text': '#BB86FC'
 	}
 	for fig in figs.values():
 		fig = style_fig(fig, colors)
 
-	app.layout = html.Div(style={'backgroundColor': colors['background']}, children=[
+	app.layout = html.Div(
+		style={
+			'backgroundColor': colors['background'],
+			'font-family': 'Optima, Verdana, Arial, sans-serif'
+		}, 
+		children=[
 		html.H1(
 			children='CoViD Germany',
 			style={
@@ -60,6 +66,7 @@ def main():
 			style={
 					'width': '33%',
 					'display': 'inline-block',
+					'backgroundColor': colors['tile'],
 			}),
 
 			# Total Hospitalizations
@@ -76,6 +83,24 @@ def main():
 			style={
 					'width': '33%',
 					'display': 'inline-block',
+					'backgroundColor': colors['tile'],
+			}),
+
+			# Total Deaths
+			html.Div(children=[
+				dcc.Graph(
+					id='deaths-total',
+					figure=figs['deaths-total']
+				),
+				dcc.Graph(
+					id='deaths-incidence-total',
+					figure=figs['deaths-incidence-total']
+				)
+			],
+			style={
+					'width': '33%',
+					'display': 'inline-block',
+					'backgroundColor': colors['tile'],
 			}),
 
 		]),
@@ -103,6 +128,7 @@ def main():
 				style={
 					'width': '33%',
 					'display': 'inline-block',
+					'backgroundColor': colors['tile'],
 				}
 			),
 
@@ -120,6 +146,25 @@ def main():
 				style={
 					'width': '33%',
 					'display': 'inline-block',
+					'backgroundColor': colors['tile'],
+				}
+			),
+
+			# deaths by age
+			html.Div(children=[
+				dcc.Graph(
+					id='deaths-by-age',
+					figure=figs['deaths-by-age']
+				),
+				dcc.Graph(
+					id='deaths-incidence-by-age',
+					figure=figs['deaths-incidence-by-age']
+				),
+				],
+				style={
+					'width': '33%',
+					'display': 'inline-block',
+					'backgroundColor': colors['tile'],
 				}
 			),
 		]),

@@ -1,9 +1,11 @@
 # pandas for data processing
 import pandas as pd
+import numpy as np
 import os
 
 # import other files for plotting
 from cases import plot_cases, plot_cases_by_age, plot_cases_positivityrate
+from deaths import plot_deaths, plot_deaths_by_age
 from hospitalizations import plot_hospitalizations, plot_hospitalizations_by_age
 from vaccine_effectiveness import plot_hospitalization_rate
 from util.helper import collect_data, date_col, date_to_week
@@ -53,11 +55,19 @@ def create_plots():
 	populations['A15..34'] = sum([populations[f'{i}-Jährige'] for i in range(15,35)])
 	populations['A35..59'] = sum([populations[f'{i}-Jährige'] for i in range(35,60)])
 	populations['A60..79'] = sum([populations[f'{i}-Jährige'] for i in range(60,80)])
+
+	populations['A00..19'] = populations['unter 1 Jahr']
+	populations['A00..19'] += sum([populations[f'{i}-Jährige'] for i in range(1,20)])
+	populations['A20..59'] = sum([populations[f'{i}-Jährige'] for i in range(20, 60)])
+
 	populations['A80+'] = sum([populations[f'{i}-Jährige'] for i in range(80,85)])
 	populations['A80+'] += populations['85 Jahre und mehr']
 
 	# interpolate missing values
 	hospitalizations_age = hospitalizations_age.interpolate(method='linear')
+	np.random.seed(0)
+	deaths_total = deaths_total.where(deaths_total != '<4', int(np.random.normal(2,1))).astype(int)
+	deaths_age = deaths_age.where(deaths_age != '<4', int(np.random.normal(2,1))).astype(int)
 	# add hospitalization incidence
 	hospitalizations_total['Inzidenz'] = (hospitalizations_total['Anzahl hospitalisiert'] / total_population) * 100000.0
 	hospitalizations_age['Inzidenz A00..04'] = (hospitalizations_age['Fälle A00..04'] / populations.at[0,'A00..04']) * 100000.0
@@ -66,6 +76,16 @@ def create_plots():
 	hospitalizations_age['Inzidenz A35..59'] = (hospitalizations_age['Fälle A35..59'] / populations.at[0,'A35..59']) * 100000.0
 	hospitalizations_age['Inzidenz A60..79'] = (hospitalizations_age['Fälle A60..79'] / populations.at[0,'A60..79']) * 100000.0
 	hospitalizations_age['Inzidenz A80+'] = (hospitalizations_age['Fälle A80+'] / populations.at[0,'A80+']) * 100000.0
+	# add deaths age groups and incidence
+	deaths_total['Inzidenz'] = (deaths_total['Anzahl verstorbene COVID-19 Fälle'] / total_population) * 100000.0
+	deaths_age['Fälle A00..19'] = deaths_age['AG 0-9 Jahre'] + deaths_age['AG 10-19 Jahre']
+	deaths_age['Fälle A20..59'] = deaths_age['AG 20-29 Jahre'] + deaths_age['AG 30-39 Jahre'] + deaths_age['AG 40-49 Jahre'] + deaths_age['AG 50-59 Jahre']
+	deaths_age['Fälle A60..79'] = deaths_age['AG 60-69 Jahre'] + deaths_age['AG 70-79 Jahre']
+	deaths_age['Fälle A80+'] = deaths_age['AG 80-89 Jahre'] + deaths_age['AG 90+ Jahre']
+	deaths_age['Inzidenz A00..19'] = (deaths_age['Fälle A00..19'] / populations.at[0,'A00..19']) * 100000.0
+	deaths_age['Inzidenz A20..59'] = (deaths_age['Fälle A20..59'] / populations.at[0,'A20..59']) * 100000.0
+	deaths_age['Inzidenz A60..79'] = (deaths_age['Fälle A60..79'] / populations.at[0,'A60..79']) * 100000.0
+	deaths_age['Inzidenz A80+'] = (deaths_age['Fälle A80+'] / populations.at[0,'A80+']) * 100000.0
 	# transpose cases DataFrames
 	cases = cases.T.reset_index()
 	cases_incidence = cases_incidence.T.reset_index()
@@ -114,6 +134,8 @@ def create_plots():
 	hospitalizations_age	= date_col(hospitalizations_age)
 	cases					= date_col(cases)
 	cases_incidence			= date_col(cases_incidence)
+	deaths_total			= date_col(deaths_total, year_col='Sterbejahr', week_col='Sterbewoche')
+	deaths_age				= date_col(deaths_age, year_col='Sterbejahr', week_col='Sterbewoche')
 	amount_tests			= date_col(amount_tests)
 	vaccinations			= date_col(vaccinations)
 
@@ -125,6 +147,8 @@ def create_plots():
 	figs['cases-by-age'], figs['cases-incidence-by-age']	= plot_cases_by_age(cases, cases_incidence)
 	figs['hosp-total'], figs['hosp-incidence-total']		= plot_hospitalizations(hospitalizations_total)
 	figs['hosp-by-age'], figs['hosp-incidence-by-age']		= plot_hospitalizations_by_age(hospitalizations_age)
+	figs['deaths-total'], figs['deaths-incidence-total']	= plot_deaths(deaths_total)
+	figs['deaths-by-age'], figs['deaths-incidence-by-age']	= plot_deaths_by_age(deaths_age)
 	figs['test-positivity-rate']							= plot_cases_positivityrate(cases, amount_tests)
 	figs['hosp-rate']										= plot_hospitalization_rate(hospitalizations_total, cases, vaccinations)
 

@@ -27,7 +27,7 @@ def collect_data():
 
 def style_fig(fig, colors):
 	fig.update_layout(
-		plot_bgcolor=colors['background'],
+		plot_bgcolor=colors['tile'],
 		paper_bgcolor=colors['background'],
 		font_color=colors['text']
 	)
