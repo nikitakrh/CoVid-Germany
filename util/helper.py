@@ -24,3 +24,11 @@ def date_to_week(df, date_col='date'):
 
 def collect_data():
 	pass
+
+def style_fig(fig, colors):
+	fig.update_layout(
+		plot_bgcolor=colors['background'],
+		paper_bgcolor=colors['background'],
+		font_color=colors['text']
+	)
+	return fig
