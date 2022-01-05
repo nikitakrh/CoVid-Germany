@@ -5,9 +5,10 @@ from dash import dcc
 from dash import html
 
 from create_plots import create_plots
-from util.helper import style_fig
+from util.helper import style_fig, collect_data
 
 def main():
+	# create the figures for the dashboard app
 	figs = create_plots()
 	# ------------------------------
 	# --------- APP LAYOUT ---------
