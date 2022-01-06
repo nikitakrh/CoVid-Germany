@@ -2,15 +2,17 @@ import pandas as pd
 import numpy as np 
 import os
 import datetime
+import requests
 
 util_dir = os.path.dirname(__file__)
-data_dir = os.path.join(os.path.join(util_dir, os.pardir), 'data/') 
-populations_filename = 'Bevoelkerung_Altersgruppen.csv'
-cases_filename = 'Altersverteilung.xlsx'
-clinical_filename = 'Klinische_Aspekte.xlsx'
-deaths_filename = 'COVID-19_Todesfaelle.xlsx'
-amount_tests_filename = 'Testzahlen-gesamt.xlsx'
+data_dir = os.path.join(os.path.join(util_dir, os.pardir), 'data/')
 vaccinations_filename = 'germany_vaccinations_timeseries_v2.tsv'
+
+cases_url = 'https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Altersverteilung.xlsx?__blob=publicationFile'
+hospitalizations_url = 'https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Klinische_Aspekte.xlsx?__blob=publicationFile'
+deaths_url = 'https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Projekte_RKI/COVID-19_Todesfaelle.xlsx?__blob=publicationFile'
+amount_tests_url = 'https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Testzahlen-gesamt.xlsx?__blob=publicationFile'
+vaccinations_url = 'https://impfdashboard.de/static/data/germany_vaccinations_timeseries_v2.tsv'
 
 
 def date_col(df, year_col='Meldejahr', week_col='Meldewoche'):
@@ -43,31 +45,21 @@ def style_fig(fig, colors):
 
 def collect_data():
 	populations				= pd.read_csv(data_dir + 'population.csv')
-	'''
-	# population
-	total_population = populations['31.12.2020'].sum()
-	populations = populations.T.reset_index()
-	populations['A00..04'] = populations['unter 1 Jahr']
-	populations['A00..04'] += sum([populations[f'{i}-Jährige'] for i in range(1,5)])
-	populations['A05..14'] = sum([populations[f'{i}-Jährige'] for i in range(5,15)])
-	populations['A15..34'] = sum([populations[f'{i}-Jährige'] for i in range(15,35)])
-	populations['A35..59'] = sum([populations[f'{i}-Jährige'] for i in range(35,60)])
-	populations['A60..79'] = sum([populations[f'{i}-Jährige'] for i in range(60,80)])
-
-	populations['A00..19'] = populations['unter 1 Jahr']
-	populations['A00..19'] += sum([populations[f'{i}-Jährige'] for i in range(1,20)])
-	populations['A20..59'] = sum([populations[f'{i}-Jährige'] for i in range(20, 60)])
-
-	populations['A80+'] = sum([populations[f'{i}-Jährige'] for i in range(80,85)])
-	populations['A80+'] += populations['85 Jahre und mehr']
 
 	# cases
-	cases					= pd.read_excel(data_dir + cases_filename, sheet_name=0, header=0, index_col='Altersgruppe', engine='openpyxl')
-	cases_incidence			= pd.read_excel(data_dir + cases_filename, sheet_name=1, header=0, index_col='Altersgruppe', engine='openpyxl')
+	r = requests.get(cases_url, allow_redirects=True)
+	open(data_dir + 'cases.xlsx', 'wb').write(r.content)
+	cases			= pd.read_excel(data_dir + 'cases.xlsx', sheet_name=1, header=0, index_col='Altersgruppe', engine='openpyxl')
+	cases_incidence	= pd.read_excel(data_dir + 'cases.xlsx', sheet_name=0, header=0, index_col='Altersgruppe', engine='openpyxl')
+	os.remove(data_dir + 'cases.xlsx')
 
 	# transpose cases DataFrames
 	cases = cases.T.reset_index()
 	cases_incidence = cases_incidence.T.reset_index()
+
+	cases.rename(columns=lambda x: x.strip(), inplace=True)
+	cases_incidence.rename(columns=lambda x: x.strip(), inplace=True)
+
 	# generate new age groups
 	cases['Fälle A00..04'] = cases['0 - 4']
 	cases['Fälle A05..14'] = cases['5 - 9'] + cases['10 - 14']
@@ -102,9 +94,13 @@ def collect_data():
 	cases.to_csv(data_dir + 'cases.csv', index=False)
 	cases_incidence.to_csv(data_dir + 'cases_incidence.csv', index=False)
 
+
 	# hospitalization
-	hospitalizations_total	= pd.read_excel(data_dir + clinical_filename, sheet_name=0, header=3, engine='openpyxl')
-	hospitalizations_age	= pd.read_excel(data_dir + clinical_filename, sheet_name=2, header=5, engine='openpyxl')
+	r = requests.get(hospitalizations_url, allow_redirects=True)
+	open(data_dir + 'hosp.xlsx', 'wb').write(r.content)
+	hospitalizations_total	= pd.read_excel(data_dir + 'hosp.xlsx', sheet_name=0, header=3, engine='openpyxl')
+	hospitalizations_age	= pd.read_excel(data_dir + 'hosp.xlsx', sheet_name=2, header=5, engine='openpyxl')
+	os.remove(data_dir + 'hosp.xlsx')
 
 	# interpolate missing values
 	hospitalizations_age = hospitalizations_age.interpolate(method='linear')
@@ -122,9 +118,13 @@ def collect_data():
 
 	hospitalizations_age.to_csv(data_dir + 'hospitalizations.csv', index=False)
 
+
 	# deaths
-	deaths_total 			= pd.read_excel(data_dir + deaths_filename, sheet_name=2, header=0, engine='openpyxl')
-	deaths_age				= pd.read_excel(data_dir + deaths_filename, sheet_name=4, header=0, engine='openpyxl')
+	r = requests.get(deaths_url, allow_redirects=True)
+	open(data_dir + 'deaths.xlsx', 'wb').write(r.content)
+	deaths_total 	= pd.read_excel(data_dir + 'deaths.xlsx', sheet_name=2, header=0, engine='openpyxl')
+	deaths_age		= pd.read_excel(data_dir + 'deaths.xlsx', sheet_name=4, header=0, engine='openpyxl')
+	os.remove(data_dir + 'deaths.xlsx')
 
 	# interpolate missing values
 	np.random.seed(0)
@@ -151,8 +151,12 @@ def collect_data():
 
 	deaths_age.to_csv(data_dir + 'deaths.csv', index=False)
 
+	
 	# amount of tests
-	amount_tests			= pd.read_excel(data_dir + amount_tests_filename, sheet_name=1, header=0, engine='openpyxl')
+	r = requests.get(amount_tests_url, allow_redirects=True)
+	open(data_dir + 'amount_tests.xlsx', 'wb').write(r.content)
+	amount_tests = pd.read_excel(data_dir + 'amount_tests.xlsx', sheet_name=1, header=0, engine='openpyxl')
+	os.remove(data_dir + 'amount_tests.xlsx')
 
 	# clean up amount_test DataFrame
 	amount_tests.at[0, 'Kalenderwoche'] = '10/2020'
@@ -166,7 +170,12 @@ def collect_data():
 	amount_tests.drop(columns=['Kalenderwoche'], inplace=True)
 	amount_tests.to_csv(data_dir + 'amount_tests.csv', index=False)
 
-	vaccinations			= pd.read_csv(data_dir + vaccinations_filename, sep='\t', header=0)
+
+	# vaccinations
+	r = requests.get(vaccinations_url, allow_redirects=True)
+	open(data_dir + 'vaccinations.tsv', 'wb').write(r.content)
+	vaccinations			= pd.read_csv(data_dir + 'vaccinations.tsv', sep='\t', header=0)
+	os.remove(data_dir + 'vaccinations.tsv')
 
 	# add 'fully vaccinated' and 'boostered' column into vaccination DataFrame
 	vaccinations['fully vaccinated'] = ((
@@ -187,7 +196,7 @@ def collect_data():
 	vaccinations = vaccinations.groupby(['Meldejahr', 'Meldewoche']).max().reset_index()
 
 	# create column for calendar week
-	vaccinations			= date_col(vaccinations)
+	vaccinations = date_col(vaccinations)
 
 	vaccinations.drop(columns=[
 		'date','dosen_kumulativ','dosen_erst_kumulativ','dosen_zweit_kumulativ','dosen_dritt_kumulativ',
@@ -203,4 +212,3 @@ def collect_data():
 		], inplace=True)
 
 	vaccinations.to_csv(data_dir + 'vaccinations.csv', index=False)
-	'''
