@@ -61,18 +61,18 @@ def collect_data():
 	cases_incidence.rename(columns=lambda x: x.strip(), inplace=True)
 
 	# generate new age groups
-	cases['Fälle A00..04'] = cases['0 - 4']
-	cases['Fälle A05..14'] = cases['5 - 9'] + cases['10 - 14']
-	cases['Fälle A15..34'] = cases['15 - 19'] + cases['20 - 24'] + cases['25 - 29'] + cases['30 - 34']
-	cases['Fälle A35..59'] = cases['35 - 39'] + cases['40 - 44'] + cases['45 - 49'] + cases['50 - 54'] + cases['55 - 59']
-	cases['Fälle A60..79'] = cases['60 - 64'] + cases['65 - 69'] + cases['70 - 74'] + cases['75 - 79']
-	cases['Fälle A80+'] = cases['80 - 84'] + cases['85 - 89'] + cases['90+']
-	cases_incidence['Inzidenz A00..04'] = (cases['Fälle A00..04'] / populations.at[0,'A00..04']) * 100000.0
-	cases_incidence['Inzidenz A05..14'] = (cases['Fälle A05..14'] / populations.at[0,'A05..14']) * 100000.0
-	cases_incidence['Inzidenz A15..34'] = (cases['Fälle A15..34'] / populations.at[0,'A15..34']) * 100000.0
-	cases_incidence['Inzidenz A35..59'] = (cases['Fälle A35..59'] / populations.at[0,'A35..59']) * 100000.0
-	cases_incidence['Inzidenz A60..79'] = (cases['Fälle A60..79'] / populations.at[0,'A60..79']) * 100000.0
-	cases_incidence['Inzidenz A80+'] = (cases['Fälle A80+'] / populations.at[0,'A80+']) * 100000.0
+	cases['Cases 0-4y'] = cases['0 - 4']
+	cases['Cases 5-14y'] = cases['5 - 9'] + cases['10 - 14']
+	cases['Cases 15-34y'] = cases['15 - 19'] + cases['20 - 24'] + cases['25 - 29'] + cases['30 - 34']
+	cases['Cases 35-59y'] = cases['35 - 39'] + cases['40 - 44'] + cases['45 - 49'] + cases['50 - 54'] + cases['55 - 59']
+	cases['Cases 60-79y'] = cases['60 - 64'] + cases['65 - 69'] + cases['70 - 74'] + cases['75 - 79']
+	cases['Cases 80+y'] = cases['80 - 84'] + cases['85 - 89'] + cases['90+']
+	cases_incidence['Incidence 0-4y'] = (cases['Cases 0-4y'] / populations.at[0,'0-4y']) * 100000.0
+	cases_incidence['Incidence 5-14y'] = (cases['Cases 5-14y'] / populations.at[0,'5-14y']) * 100000.0
+	cases_incidence['Incidence 15-34y'] = (cases['Cases 15-34y'] / populations.at[0,'15-34y']) * 100000.0
+	cases_incidence['Incidence 35-59y'] = (cases['Cases 35-59y'] / populations.at[0,'35-59y']) * 100000.0
+	cases_incidence['Incidence 60-79y'] = (cases['Cases 60-79y'] / populations.at[0,'60-79y']) * 100000.0
+	cases_incidence['Incidence 80+y'] = (cases['Cases 80+y'] / populations.at[0,'80+y']) * 100000.0
 
 	cases[['Meldejahr', 'Meldewoche']]				= cases['index'].str.split('_', expand=True)
 	cases_incidence[['Meldejahr', 'Meldewoche']]	= cases_incidence['index'].str.split('_', expand=True)
@@ -104,15 +104,20 @@ def collect_data():
 
 	# interpolate missing values
 	hospitalizations_age = hospitalizations_age.interpolate(method='linear')
+	# rename columns
+	hospitalizations_age.rename(columns={
+			'Fälle A00..04': 'Cases 0-4y', 'Fälle A05..14': 'Cases 5-14y', 'Fälle A15..34': 'Cases 15-34y',
+			'Fälle A35..59': 'Cases 35-59y', 'Fälle A60..79': 'Cases 60-79y', 'Fälle A80+': 'Cases 80+y'
+			}, inplace=True)
 	# add hospitalization incidence
-	hospitalizations_age['Fälle Gesamt'] = hospitalizations_total['Anzahl hospitalisiert']
-	hospitalizations_age['Inzidenz A00..04'] = (hospitalizations_age['Fälle A00..04'] / populations.at[0,'A00..04']) * 100000.0
-	hospitalizations_age['Inzidenz A05..14'] = (hospitalizations_age['Fälle A05..14'] / populations.at[0,'A05..14']) * 100000.0
-	hospitalizations_age['Inzidenz A15..34'] = (hospitalizations_age['Fälle A15..34'] / populations.at[0,'A15..34']) * 100000.0
-	hospitalizations_age['Inzidenz A35..59'] = (hospitalizations_age['Fälle A35..59'] / populations.at[0,'A35..59']) * 100000.0
-	hospitalizations_age['Inzidenz A60..79'] = (hospitalizations_age['Fälle A60..79'] / populations.at[0,'A60..79']) * 100000.0
-	hospitalizations_age['Inzidenz A80+'] = (hospitalizations_age['Fälle A80+'] / populations.at[0,'A80+']) * 100000.0
-	hospitalizations_age['Inzidenz Gesamt'] = (hospitalizations_total['Anzahl hospitalisiert'] / populations.at[0, 'total']) * 100000.0
+	hospitalizations_age['Total Cases'] = hospitalizations_total['Anzahl hospitalisiert']
+	hospitalizations_age['Incidence 0-4y'] = (hospitalizations_age['Cases 0-4y'] / populations.at[0,'0-4y']) * 100000.0
+	hospitalizations_age['Incidence 5-14y'] = (hospitalizations_age['Cases 5-14y'] / populations.at[0,'5-14y']) * 100000.0
+	hospitalizations_age['Incidence 15-34y'] = (hospitalizations_age['Cases 15-34y'] / populations.at[0,'15-34y']) * 100000.0
+	hospitalizations_age['Incidence 35-59y'] = (hospitalizations_age['Cases 35-59y'] / populations.at[0,'35-59y']) * 100000.0
+	hospitalizations_age['Incidence 60-79y'] = (hospitalizations_age['Cases 60-79y'] / populations.at[0,'60-79y']) * 100000.0
+	hospitalizations_age['Incidence 80+y'] = (hospitalizations_age['Cases 80+y'] / populations.at[0,'80+y']) * 100000.0
+	hospitalizations_age['Total Incidence'] = (hospitalizations_total['Anzahl hospitalisiert'] / populations.at[0, 'total']) * 100000.0
 
 	hospitalizations_age	= date_col(hospitalizations_age)
 
@@ -131,16 +136,16 @@ def collect_data():
 	deaths_total = deaths_total.where(deaths_total != '<4', int(np.random.normal(2,1))).astype(int)
 	deaths_age = deaths_age.where(deaths_age != '<4', int(np.random.normal(2,1))).astype(int)
 	# add deaths age groups and incidence
-	deaths_age['Fälle A00..19'] = deaths_age['AG 0-9 Jahre'] + deaths_age['AG 10-19 Jahre']
-	deaths_age['Fälle A20..59'] = deaths_age['AG 20-29 Jahre'] + deaths_age['AG 30-39 Jahre'] + deaths_age['AG 40-49 Jahre'] + deaths_age['AG 50-59 Jahre']
-	deaths_age['Fälle A60..79'] = deaths_age['AG 60-69 Jahre'] + deaths_age['AG 70-79 Jahre']
-	deaths_age['Fälle A80+'] = deaths_age['AG 80-89 Jahre'] + deaths_age['AG 90+ Jahre']
-	deaths_age['Fälle Gesamt'] = deaths_total['Anzahl verstorbene COVID-19 Fälle']
-	deaths_age['Inzidenz A00..19'] = (deaths_age['Fälle A00..19'] / populations.at[0,'A00..19']) * 100000.0
-	deaths_age['Inzidenz A20..59'] = (deaths_age['Fälle A20..59'] / populations.at[0,'A20..59']) * 100000.0
-	deaths_age['Inzidenz A60..79'] = (deaths_age['Fälle A60..79'] / populations.at[0,'A60..79']) * 100000.0
-	deaths_age['Inzidenz A80+'] = (deaths_age['Fälle A80+'] / populations.at[0,'A80+']) * 100000.0
-	deaths_age['Inzidenz Gesamt'] = (deaths_total['Anzahl verstorbene COVID-19 Fälle'] / populations.at[0, 'total']) * 100000.0
+	deaths_age['Cases 0-19y'] = deaths_age['AG 0-9 Jahre'] + deaths_age['AG 10-19 Jahre']
+	deaths_age['Cases 20-59y'] = deaths_age['AG 20-29 Jahre'] + deaths_age['AG 30-39 Jahre'] + deaths_age['AG 40-49 Jahre'] + deaths_age['AG 50-59 Jahre']
+	deaths_age['Cases 60-79y'] = deaths_age['AG 60-69 Jahre'] + deaths_age['AG 70-79 Jahre']
+	deaths_age['Cases 80+y'] = deaths_age['AG 80-89 Jahre'] + deaths_age['AG 90+ Jahre']
+	deaths_age['Total Cases'] = deaths_total['Anzahl verstorbene COVID-19 Fälle']
+	deaths_age['Incidence 0-19y'] = (deaths_age['Cases 0-19y'] / populations.at[0,'0-19y']) * 100000.0
+	deaths_age['Incidence 20-59y'] = (deaths_age['Cases 20-59y'] / populations.at[0,'20-59y']) * 100000.0
+	deaths_age['Incidence 60-79y'] = (deaths_age['Cases 60-79y'] / populations.at[0,'60-79y']) * 100000.0
+	deaths_age['Incidence 80+y'] = (deaths_age['Cases 80+y'] / populations.at[0,'80+y']) * 100000.0
+	deaths_age['Total Incidence'] = (deaths_total['Anzahl verstorbene COVID-19 Fälle'] / populations.at[0, 'total']) * 100000.0
 
 	deaths_age				= date_col(deaths_age, year_col='Sterbejahr', week_col='Sterbewoche')
 

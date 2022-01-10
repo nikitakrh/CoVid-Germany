@@ -2,13 +2,13 @@ import plotly.express as px
 
 def plot_hospitalizations(hospitalizations):
 	fig_hosp_total = px.line(
-		hospitalizations, x='Meldedatum', y='Fälle Gesamt', 
+		hospitalizations, x='Meldedatum', y='Total Cases', 
 		title='Hospitalizations for CoViD-19 in Germany',
-		labels={'Meldedatum': 'Date'}
+		labels={'Meldedatum': 'Date', 'Fälle Gesamt': 'Hospitalizations'}
 	)
 	fig_hosp_incidence_total = px.line(
-		hospitalizations, x='Meldedatum', y='Inzidenz Gesamt',
-		title='Hospitalization Incidence', labels={'Meldedatum': 'Date'}
+		hospitalizations, x='Meldedatum', y='Total Incidence',
+		title='Hospitalization Incidence', labels={'Meldedatum': 'Date', 'Total Incidence': 'Hospitalization Incidence'}
 	)
 	
 	return fig_hosp_total, fig_hosp_incidence_total
@@ -18,12 +18,15 @@ def plot_hospitalizations_by_age(hospitalizations):
 	fig_hosp_by_age = px.area(
 		hospitalizations, 
 		x='Meldedatum',
-		y=['Fälle A00..04', 'Fälle A05..14','Fälle A15..34', 'Fälle A35..59', 'Fälle A60..79', 'Fälle A80+']
+		y=['Cases 0-4y', 'Cases 5-14y', 'Cases 15-34y', 'Cases 35-59y', 'Cases 60-79y', 'Cases 80+y'],
+		title='Hospitalizations by Age',
+		labels={'Meldedatum': 'Date', 'value': 'Hospitalization Incidence', 'variable': 'Agegroups'}
+
 	)
 	fig_hosp_incidence_by_age = px.line(
 		hospitalizations, 
 		x='Meldedatum', 
-		y=['Inzidenz A00..04', 'Inzidenz A05..14','Inzidenz A15..34', 'Inzidenz A35..59', 'Inzidenz A60..79', 'Inzidenz A80+'], 
+		y=['Incidence 0-4y', 'Incidence 5-14y','Incidence 15-34y', 'Incidence 35-59y', 'Incidence 60-79y', 'Incidence 80+y'], 
 		title='Hospitalization Incidence by Age',
 		labels={'Meldedatum': 'Date', 'value': 'Hospitalization Incidence', 'variable': 'Agegroups'}
 	)
