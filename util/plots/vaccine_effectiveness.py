@@ -26,3 +26,27 @@ def plot_hospitalization_rate(hospitalizations, cases, vaccinations):
 	fig_hosp_rate.update_yaxes(title_text='Vaccination Progress (%)', showgrid=False, secondary_y=True)
 
 	return fig_hosp_rate
+
+def plot_cases_vs_vaxx_rate(vaxx_rate_by_state):
+	fig_cases_vs_vaxx_rate = px.scatter(
+			vaxx_rate_by_state, x='case_incidence', y='fully_vaccinated',
+			size='case_incidence', text='state', trendline='ols'
+		)
+
+	return fig_cases_vs_vaxx_rate
+
+def plot_hosp_vs_vaxx_rate(vaxx_rate_by_state):
+	fig_hosp_vs_vaxx_rate = px.scatter(
+			vaxx_rate_by_state, x='hospitalization_incidence', y='fully_vaccinated',
+			size='hospitalization_incidence', text='state', trendline='ols'
+		)
+
+	return fig_hosp_vs_vaxx_rate
+
+def plot_hosp_per_cases_vs_vaxx_rate(vaxx_rate_by_state):
+	fig_hosp_per_cases_vs_vaxx_rate = px.scatter(
+			vaxx_rate_by_state, x='hosp_per_case_incidence', y='fully_vaccinated',
+			size='hosp_per_case_incidence', text='state', trendline='ols'
+		)
+
+	return fig_hosp_per_cases_vs_vaxx_rate

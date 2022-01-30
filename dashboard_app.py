@@ -4,8 +4,8 @@ import dash
 from dash import dcc
 from dash import html
 
-from create_plots import create_plots
-from util.helper import style_fig, collect_data
+from util.create_plots import create_plots
+from util.helper import style_fig
 
 def main():
 	# create the figures for the dashboard app
@@ -170,12 +170,58 @@ def main():
 			),
 		]),
 
+		# 
+		html.Div(children=[
+			html.Div(children=[
+				dcc.Graph(
+					id='case-vs-vaxx-rate',
+					figure=figs['case-vs-vaxx-rate']
+				)
+				],
+				style={
+					'width': '33%',
+					'display':'inline-block',
+					'backgroundColor': colors['tile'],
+				}
+			),
+
+			html.Div(children=[
+				dcc.Graph(
+					id='hosp-vs-vaxx-rate',
+					figure=figs['hosp-vs-vaxx-rate']
+				)
+				],
+				style={
+					'width': '33%',
+					'display':'inline-block',
+					'backgroundColor': colors['tile'],
+				}
+			),
+
+			html.Div(children=[
+				dcc.Graph(
+					id='hosp-per-cases-vs-vaxx-rate',
+					figure=figs['hosp-per-cases-vs-vaxx-rate']
+				)
+				],
+				style={
+					'width': '33%',
+					'display':'inline-block',
+					'backgroundColor': colors['tile'],
+				})
+		]),
+		
 		html.Div(children=[
 			html.H2(
 				children='Additional Information',
 				style={
 					'color': colors['text']
 				}
+			),
+
+			dcc.Graph(
+				id='predicted-cases',
+				figure=figs['predicted-cases']
 			),
 
 			dcc.Graph(

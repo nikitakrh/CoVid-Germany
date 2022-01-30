@@ -2,8 +2,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-# TODO: plot cases and hospitalizations by age for each agegroup
-
 def plot_cases(cases, cases_incidence):
 	fig_cases_total = px.line(
 		cases, x='Meldedatum', y='Gesamt', 
@@ -57,3 +55,12 @@ def plot_cases_positivityrate(cases, amount_tests):
 	fig_test_positivity_rate.update_yaxes(title_text='Test Positivity Rate (%)', showgrid=False, secondary_y=True)
 
 	return fig_test_positivity_rate
+
+def predict_next_30_days(daily_cases):
+	fig_cases_prediction = px.line(
+		daily_cases, x='Date', y='avg_cases', 
+		title='Predicted Cases for the next 30 days', 
+		labels={'avg_cases': 'Cases (7 Day Rolling Mean)'}
+	)
+
+	return fig_cases_prediction
